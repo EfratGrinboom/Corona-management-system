@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Member } = require('./services/db'); 
+const { Member } = require('./services/db');
 
 const memberService = require('./services/memberService');
 
@@ -44,8 +44,7 @@ router.get('/member/:id', async (req, res) => {
 
 // Update Member (PUT)
 router.put('/member/:id', async (req, res) => {
-    try {  
-        const memberData = req.body
+    try {
         const updatedMember = await memberService.updateMember(req);
         if (!updatedMember) {
             return res.status(404).json({ message: 'Member not found' }); // Not Found

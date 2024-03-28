@@ -37,3 +37,19 @@
   color: #000; 
   text-decoration: underline; 
 }
+.MembersList .add-member-button {
+    background-color: #a078c4; /* Lavender background */
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 5px; /* Slightly rounded edges */
+    font-size: 1rem; /* Larger text */
+    font-weight: bold; /* Bold text */
+    margin-top: 1rem; /* Space above the button */
+    text-align: center; /* Center button text */
+    cursor: pointer; /* Indicate interactivity */
+    transition: all 0.2s ease-in-out; /* Smooth color change on hover */
+  }
+  
+  .MembersList .add-member-button:hover {
+    background-color: #b57aff; /* Slightly darker lavender on hover */
+  }

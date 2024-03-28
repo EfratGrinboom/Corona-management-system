@@ -12,6 +12,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+      <Route path="/" element={<MembersList />} />
         <Route path="/members" element={<MembersList />} />
         <Route path="/member/:id" element={<MemberDetails />} />
         <Route path="/edit-member/:id" element={<EditMember />} />

@@ -7,7 +7,6 @@ import '../style/MemberDetails.css';
 function MemberDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
-    console.log('the member id:', id);
 
     const [member, setMember] = useState(null);
 
@@ -24,7 +23,6 @@ function MemberDetails() {
                 }
 
                 const json = await response.json();
-                console.log('member json:', json);
                 setMember(json);
             } catch (error) {
                 console.error('Error fetching member:', error);
@@ -32,12 +30,6 @@ function MemberDetails() {
         }
         fetchMember();
     }, [id]);
-
-    // function onEditMemberClick(id) {
-    //     // פתח את הקומפוננטה לעדכון חבר עם ה-ID
-    //     console.log('Opening edit member component for id:', id);
-    //     // פה צריך להוסיף קוד לפתיחת קומפוננטת עריכה
-    // }
 
     function onDeleteMemberClick(id) {
         console.log('Deleting member with id:', id);
@@ -58,29 +50,36 @@ function MemberDetails() {
     if (!member) {
         return <div>Loading...</div>;
     }
+    const hasCovidInfo = member.covid_info && Object.keys(member.covid_info).length > 0;
 
     return (
         <div className="MemberDetails">
             <h1>Name: {member.First_name} {member.Last_name}</h1>
             <h2>ID:</h2> <p>{member.Id}</p>
-            <h2>Addres:</h2>
+            <h2>Address:</h2>
             <ul>
-                <li>city: {member.Addres.city}</li>
-                <li>street: {member.Addres.street}</li>
-                <li>number: {member.Addres.number}</li>
+                <li>city: {member.Address.city}</li>
+                <li>street: {member.Address.street}</li>
+                <li>number: {member.Address.number}</li>
             </ul>
             <h2>Mobile_phon:</h2> <p>{member.Mobile_phon}</p>
             <h2>Telephone:</h2> <p>{member.Telephone}</p>
             <br></br>
-            <h2>COVID Information</h2>
-            {member.covid_info && (
+
+            {hasCovidInfo && (
+                <h2>COVID Information</h2>
+            )}
+
+            {hasCovidInfo && member.covid_info && member.covid_info.covidPositiveDate && (
+                <p>Positive Date: {new Date(member.covid_info.covidPositiveDate.$date).toLocaleString()}</p>
+            )}
+
+            {hasCovidInfo && member.covid_info && member.covid_info.covidRecoveryDate && (
+                <p>Recovery Date: {new Date(member.covid_info.covidRecoveryDate.$date).toLocaleString()}</p>
+            )}
+
+            {hasCovidInfo && (
                 <div>
-                    <p>
-                        Positive Date: {new Date(member.covid_info.covidPositiveDate.$date).toLocaleString()}
-                    </p>
-                    <p>
-                        Recovery Date: {new Date(member.covid_info.covidRecoveryDate.$date).toLocaleString()}
-                    </p>
                     <h3>Vaccinations</h3>
                     <ul>
                         {member.covid_info.vaccinations.map((vaccination, index) => {
@@ -89,12 +88,8 @@ function MemberDetails() {
 
                             if (!hasBothData) {
                                 return hasOnlyOneData ? (
-                                    <li key={index}>
-                                        Some vaccination details are missing.
-                                    </li>
-                                ) : (
-                                    null
-                                );
+                                    <li key={index}>Some vaccination details are missing.</li>
+                                ) : null;
                             }
 
                             return (
@@ -106,13 +101,14 @@ function MemberDetails() {
                     </ul>
                 </div>
             )}
+
             <div className="buttons">
-                {/* <button onClick={() => onEditMemberClick(member.Id)}>Edit</button> */}
                 <button onClick={() => navigate("/edit-member/" + member.Id, { state: { member } })}>Edit</button>
                 <button onClick={() => onDeleteMemberClick(member.Id)}>Delete</button>
             </div>
         </div>
     );
+
 }
 
 export default MemberDetails;

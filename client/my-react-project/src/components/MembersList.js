@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../style/MembersList.css';
 
 function MembersList() {
     const [allMembers, setAllMembers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchMembers() {
@@ -21,6 +22,10 @@ function MembersList() {
         fetchMembers();
     }, []);
 
+    const handleAddMember = () => {
+        navigate('/createMember'); // Use navigate to redirect to CreateMember
+    };
+
     return (
         <div className='MembersList'>
             <ul>
@@ -30,6 +35,7 @@ function MembersList() {
                     </li>
                 ))}
             </ul>
+            <button className='add-member-button' onClick={handleAddMember}>Add a new Member</button>
         </div>
     );
 }

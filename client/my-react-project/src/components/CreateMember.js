@@ -1,14 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import '../style/CreateMember.css';
 
+
 function CreateMember() {
+  const navigate = useNavigate();
   const [newMember, setNewMember] = useState({
     First_name: "",
     Last_name: "",
     Id: "",
     Mobile_phon: "",
     Telephone: "",
-    Addres: {
+    Address: {
       city: "",
       street: "",
       number: "",
@@ -21,59 +24,79 @@ function CreateMember() {
   });
 
   async function onSubmitMemberClick() {
-    if (!validateRequiredFields()) return;
-
-    const response = await fetch(`http://localhost:3000/createMember/`, {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
+    const response = await fetch('http://localhost:3000/createMember', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMember),
     });
 
-    // Handle response (e.g., show success message or error)
-    console.log("Member creation response:", response);
+    // Navigate back to members list after successful update
+    navigate('/members');
+
+
   }
 
   const validateRequiredFields = () => {
     const requiredFields = [
-      "First_name",
-      "Last_name",
-      "Id",
-      "Mobile_phon",
-      "Telephone",
-      "Addres.city",
-      "Addres.street",
-      "Addres.number",
+      'First_name',
+      'Last_name',
+      'Id',
+      'Mobile_phon',
+      'Telephone',
+      'Address.city',
+      'Address.street',
+      'Address.number',
     ];
 
-    const missingFields = requiredFields.filter((field) => !newMember[field]);
+    // const missingFields = requiredFields.filter((field) => !newMember[field]);
 
-    if (missingFields.length > 0) {
-      alert(`Please fill in the following required fields: ${missingFields.join(", ")}`);
-      return false;
-    }
+    // if (missingFields.length > 0) {
+    //   alert(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+    //   return false;
+    // }
 
     return true; // All required fields filled
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewMember({ ...newMember, [name]: value });
+
+    if (name.includes('.')) {
+      const [parentField, childField] = name.split('.');
+      setNewMember((prevState) => ({
+        ...prevState,
+        [parentField]: {
+          ...prevState[parentField],
+          [childField]: value,
+        },
+      }));
+    } else {
+      setNewMember({ ...newMember, [name]: value });
+    }
   };
 
   const handleAddVaccination = () => {
     if (newMember.covid_info.vaccinations.length >= 4) {
-      alert("You can only add up to 4 vaccinations.");
+      alert('You can only add up to 4 vaccinations.');
       return;
     }
-  
+
+    // Create a new vaccination object with default empty values
+    const newVaccination = {
+      date: '',
+      manufacturer: '',
+    };
+
+    // Update newMember state with the added vaccination
     setNewMember({
       ...newMember,
       covid_info: {
         ...newMember.covid_info,
-        vaccinations: [...newMember.covid_info.vaccinations, { date: "", manufacturer: "" }],
+        vaccinations: [...newMember.covid_info.vaccinations, newVaccination],
       },
     });
   };
+
 
   return (
     <div className="CreateMember">
@@ -102,20 +125,20 @@ function CreateMember() {
 
       <h2>Address:</h2>
       <label htmlFor="city">City:</label>
-      <input type="text" id="city" name="Addres.city" value={newMember.Addres.city} onChange={handleInputChange} />
+      <input type="text" id="city" name="Address.city" value={newMember.Address.city} onChange={handleInputChange} />
       <br />
 
       <label htmlFor="street">Street:</label>
-      <input type="text" id="street" name="Addres.street" value={newMember.Addres.street} onChange={handleInputChange} />
+      <input type="text" id="street" name="Address.street" value={newMember.Address.street} onChange={handleInputChange} />
       <br />
 
       <label htmlFor="number">Number:</label>
-      <input type="text" id="number" name="Addres.number" value={newMember.Addres.number} onChange={handleInputChange} />
+      <input type="text" id="number" name="Address.number" value={newMember.Address.number} onChange={handleInputChange} />
       <br />
 
       <h2>COVID Information: (Optional)</h2>
       <label htmlFor="positiveDate">Positive Date:</label>
-      <input type="text" id="positiveDate" name="covid_info.covidPositiveDate" value={newMember.covid_info.covidPositiveDate} onChange={handleInputChange}/>
+      <input type="text" id="positiveDate" name="covid_info.covidPositiveDate" value={newMember.covid_info.covidPositiveDate} onChange={handleInputChange} />
       <br />
 
       <label htmlFor="recoveryDate">Recovery Date:</label>

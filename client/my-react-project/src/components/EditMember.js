@@ -1,48 +1,122 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../style/EditMember.css';
 
+
+
 function EditMember() {
+    const navigate = useNavigate();
     const location = useLocation();
     const { member } = location.state;
     const [updatedMember, setUpdatedMember] = useState(member);
+    const [vaccinations, setVaccinations] = useState(member.covid_info.vaccinations);
 
-    // const [isSubmitting, setIsSubmitting] = useState(false);
-    // const [errorMessage, setErrorMessage] = useState("");
 
     async function onSubmitMemberClick() {
-        // console.log(updatedMember)
-        // בדיקה שכל השדות הרלוונטיים נמלאו
-        if (!updatedMember.First_name || !updatedMember.Last_name || !updatedMember.Id || !updatedMember.Mobile_phon || !updatedMember.Telephone || !updatedMember.Addres.city || !updatedMember.Addres.street || !updatedMember.Addres.number) {
+        if (!updatedMember.First_name || !updatedMember.Last_name || !updatedMember.Id || !updatedMember.Mobile_phon || !updatedMember.Telephone || !updatedMember.Address.city || !updatedMember.Address.street || !updatedMember.Address.number) {
             alert("Please fill in all required fields.");
-            // setErrorMessage("Please fill in all required fields.");
             return;
         }
 
-        const response = await fetch(`http://localhost:3000/member/${updatedMember.Id}`, {
-            method: 'PUT',
-            headers: { 'Content-type': 'application/json' },
-            body: JSON.stringify(updatedMember),
+        // בדיקה של פורמט התאריך 
+        const isValidPositiveDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(updatedMember.covid_info.covidPositiveDate);
+        const isValidRecoveryDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(updatedMember.covid_info.covidRecoveryDate);
+        const isValidVaccinationDate = updatedMember.covid_info.vaccinations.every(vaccination => {
+            return vaccination.date === "" && /^(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(vaccination.date);
         });
-        console.log('response :', response);
 
-        const json = await response.json();
-        console.log('member json:', json);
-        // setUpdatedMember(json);
-        // console.log("Member updated successfully:", updatedMember);
 
-    };
+
+
+        // בדיקה של תקינות התאריך - אם אחד מהם לא תקין, תוצג הודעת שגיאה והפונקציה תעצור כאן
+        if (!isValidPositiveDate || !isValidRecoveryDate) {
+            alert("Please enter valid dates in the format YYYY-MM-DD.");
+            return;
+        }
+
+        const updatedMemberWithVaccinations = {
+            ...updatedMember,
+            covid_info: {
+                ...updatedMember.covid_info,
+                vaccinations,
+            },
+        };
+
+        try {
+            const response = await fetch(`http://localhost:3000/member/${updatedMember.Id}`, {
+                method: 'PUT',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify(updatedMember),
+            });
+
+            if (!response.ok) {
+                throw new Error('Update failed');
+
+            }
+
+            const json = await response.json();
+            console.log('member json:', json);
+
+            // Navigate back to members list after successful update
+            navigate('/members');
+
+        } catch (error) {
+            console.error('Update error:', error);
+        }
+    }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setUpdatedMember({ ...updatedMember, [name]: value });
-        // console.log("updatedMember", updatedMember);
+
+        // טיפול בשדות "covid_info"
+        if (name === "covid_info.covidPositiveDate" || name === "covid_info.covidRecoveryDate") {
+            const [parentField, childField] = name.split(".");
+            setUpdatedMember(prevState => ({
+                ...prevState,
+                [parentField]: {
+                    ...prevState[parentField],
+                    [childField]: value
+                }
+            }));
+        } else if (name.includes("covid_info.vaccinations")) {
+            // אם השדה הוא שדה ברשימת החיסונים
+            const index = parseInt(name.match(/\[(.*?)\]/)[1]);
+            const fieldName = name.split(".").pop();
+            const updatedVaccinations = [...vaccinations];
+            updatedVaccinations[index] = {
+                ...updatedVaccinations[index],
+                [fieldName]: value
+            };
+            setVaccinations(updatedVaccinations);
+            return;
+        }
+
+        // טיפול בשדות Addres
+        else if (name.includes("Address")) {
+            // אם השדה הוא שדה בפרטי הכתובת
+            const [parentField, childField] = name.split(".");
+            setUpdatedMember(prevState => ({
+                ...prevState,
+                Address: {
+                    ...prevState.Address,
+                    [childField]: value
+                }
+            }));
+        }
+
+        // שדות רגילים
+        setUpdatedMember((prevState) => ({
+            ...prevState,
+            [name]: value
+        }));
+
     };
+
 
 
     return (
         <div className="EditMember">
-            {/* <form> */}
             <h2 id="PersonalDetails">Personal details</h2>
             <label htmlFor="firstName">First Name:</label>
             <input type="text" id="firstName" name="First_name" value={updatedMember.First_name} onChange={handleInputChange} />
@@ -66,15 +140,15 @@ function EditMember() {
 
             <h2>Address:</h2>
             <label htmlFor="city">City:</label>
-            <input type="text" id="city" name="Addres.city" value={updatedMember.Addres.city} onChange={handleInputChange} />
+            <input type="text" id="city" name="Address.city" value={updatedMember.Address.city} onChange={handleInputChange} />
             <br />
 
             <label htmlFor="street">Street:</label>
-            <input type="text" id="street" name="Addres.street" value={updatedMember.Addres.street} onChange={handleInputChange} />
+            <input type="text" id="street" name="Address.street" value={updatedMember.Address.street} onChange={handleInputChange} />
             <br />
 
             <label htmlFor="number">Number:</label>
-            <input type="text" id="number" name="Addres.number" value={updatedMember.Addres.number} onChange={handleInputChange} />
+            <input type="text" id="number" name="Address.number" value={updatedMember.Address.number} onChange={handleInputChange} />
             <br />
 
             <h2>COVID Information:</h2>
@@ -87,21 +161,30 @@ function EditMember() {
             <br />
 
             <h3>Vaccinations:</h3>
-            {updatedMember.covid_info.vaccinations.map((vaccination, index) => (
+            {vaccinations.map((vaccination, index) => (
                 <div key={index}>
                     <label htmlFor={`vaccinationDate${index}`}>Vaccination Date:</label>
-                    <input type="text" id={`vaccinationDate${index}`} name={`covid_info.vaccinations[${index}].date`} value={vaccination.date} onChange={handleInputChange} />
+                    <input
+                        type="text"
+                        id={`vaccinationDate${index}`}
+                        name={`covid_info.vaccinations[${index}].date`}
+                        value={vaccination.date || ""} // Ensure default value for date
+                        onChange={handleInputChange}
+                    />
                     <label> </label>
                     <label htmlFor={`vaccinationManufacturer${index}`}>Vaccination Manufacturer:</label>
-                    <input type="text" id={`vaccinationManufacturer${index}`} name={`covid_info.vaccinations[${index}].manufacturer`} value={vaccination.manufacturer} onChange={handleInputChange} />
+                    <input
+                        type="text"
+                        id={`vaccinationManufacturer${index}`}
+                        name={`covid_info.vaccinations[${index}].manufacturer`}
+                        value={vaccination.manufacturer || ""} // Ensure default value for manufacturer
+                        onChange={handleInputChange}
+                    />
                     <br />
                     <br />
-
                 </div>
             ))}
             <button onClick={() => onSubmitMemberClick()}>Submit</button>
-            {/* <button type="submit">Submit</button> */}
-            {/* </form> */}
         </div>
     );
 }
