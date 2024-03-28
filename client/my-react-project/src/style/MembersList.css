@@ -1,0 +1,39 @@
+.MembersList {
+  background-color: #f7f7f7; /* צבע רקע בהיר */
+  padding: 2rem; /* מרווח פנימי */
+  font-family: Arial, sans-serif; /* משפחת גופנים */
+}
+
+.MembersList ul {
+  list-style: none; 
+  padding: 0; 
+}
+
+.MembersList li {
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.MembersList li:hover {
+  background-color: #f9e9f8;
+}
+
+.MembersList a {
+  text-decoration: none; 
+  color: #5a0b4f;
+  font-weight: bold; 
+  font-size: larger;
+}
+
+.MembersList a:hover {
+  color: #000; 
+  text-decoration: underline; 
+}

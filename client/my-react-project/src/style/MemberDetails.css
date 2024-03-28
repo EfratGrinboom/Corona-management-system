@@ -1,0 +1,67 @@
+.MemberDetails {
+    background-color: #f7f7f7;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .MemberDetails .details {
+    padding: 1rem;
+  }
+  
+  .MemberDetails .buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .MemberDetails .buttons button {
+    background-color: #5a0b4f;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    margin: 0 0.5rem;
+  }
+  
+  .MemberDetails .buttons button:hover {
+    background-color: #f3d1f4;
+  }
+  
+  .MemberDetails h1,
+  .MemberDetails h2 {
+    margin: 0;
+  }
+  
+  .MemberDetails h1 {
+    font-size: 1.8rem;
+    padding-bottom: 20px;
+  }
+  
+  .MemberDetails h2 {
+    font-size: 1.4rem;
+  }
+  
+  .MemberDetails p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  
+  .MemberDetails .name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .MemberDetails .details p {
+    background-color: #fff;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+  

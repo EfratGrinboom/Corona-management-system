@@ -1,0 +1,105 @@
+.EditMember {
+    background-color: #f7f7f7;
+    padding: 1.5rem; /* Reduced padding */
+    font-family: Arial, sans-serif;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.6; /* Slightly reduced line height */
+  }
+  
+  .EditMember .details {
+    padding: 0.75rem; /* Reduced padding */
+  }
+  
+  .EditMember .buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .EditMember .buttons button {
+    background-color: #5a0b4f;
+    color: #fff;
+    padding: 0.5rem 1rem; /* Reduced padding */
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    margin: 0 0.5rem;
+  }
+  
+  .EditMember .buttons button:hover {
+    background-color: #f3d1f4;
+  }
+  
+  .EditMember h1,
+  .EditMember h2 {
+    margin: 0;
+    color: #5a0b4f; /* Purple for headings */
+  }
+  
+  .EditMember h1 {
+    font-size: 1.6rem; /* Reduced font size */
+    padding-bottom: 15px;
+  }
+  
+  .EditMember h2 {
+    font-size: 1.2rem;
+  }
+  
+  .EditMember p {
+    font-size: 1rem;
+  }
+  
+  .EditMember .name {
+    font-weight: bold;
+    font-size: 1.1rem; /* Reduced font size */
+    margin-bottom: 0.5rem;
+  }
+  
+  .EditMember .details p {
+    background-color: #fff;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .EditMember .details p:hover {
+    transform: scale(1.02);
+  }
+  
+  .EditMember input[type="text"] {
+    margin-bottom: 1rem;
+    padding: 0.3rem 0.7rem; /* Reduced padding */
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .EditMember label {
+    font-weight: bold;
+  }
+  
+  .EditMember button { /* Styles for all buttons */
+    background-color: #5a0b4f;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 1rem;
+  }
+  
+  .EditMember button:hover {
+    background-color: #7c1780;
+  }
+  #PersonalDetails {
+    font-size: 1.8rem;
+  }
+  
+

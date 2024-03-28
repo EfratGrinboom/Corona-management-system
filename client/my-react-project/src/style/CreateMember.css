@@ -1,0 +1,96 @@
+.CreateMember {
+    background-color: #f7f7f7;
+    padding: 1rem; /* Reduced padding */
+    font-family: Arial, sans-serif;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.4; /* Slightly reduced line height */
+  }
+  
+  .CreateMember .details {
+    padding: 0.5rem; /* Reduced padding */
+  }
+  
+  .CreateMember .buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Add gap between buttons */
+  }
+  
+  .CreateMember .buttons button {
+    background-color: #5a0b4f;
+    color: #fff;
+    padding: 0.5rem 1rem; /* Reduced padding */
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .CreateMember .buttons button:hover {
+    background-color: #f3d1f4;
+  }
+  
+  .CreateMember h2 {
+    margin: 0;
+    color: #5a0b4f; /* Purple for headings */
+  }
+  
+  .CreateMember h2 {
+    font-size: 1.4rem; /* Reduced font size */
+    padding-bottom: 10px;
+  }
+  
+  .CreateMember p {
+    font-size: 0.9rem; /* Reduced font size */
+  }
+  
+  .CreateMember .name {
+    font-weight: bold;
+    font-size: 1rem; /* Reduced font size */
+    margin-bottom: 0.5rem;
+  }
+  
+  .CreateMember .details p {
+    background-color: #fff;
+    padding: 0.3rem; /* Reduced padding */
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .CreateMember .details p:hover {
+    transform: scale(1.02);
+  }
+  
+  .CreateMember input[type="text"] {
+    margin-bottom: 1rem;
+    padding: 0.2rem 0.5rem; /* Reduced padding */
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .CreateMember label {
+    font-weight: bold;
+  }
+  
+  .CreateMember button { /* Styles for all buttons */
+    background-color: #5a0b4f;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 1rem;
+    margin-right: 10px;
+  }
+  
+  .CreateMember button:hover {
+    background-color: #7c1780;
+  }
+  
