@@ -22,42 +22,73 @@ function CreateMember() {
       vaccinations: [],
     },
   });
+  const [validation, setValidation] = "OK";
 
+  //#region create a new member
   async function onSubmitMemberClick() {
-    const response = await fetch('http://localhost:3000/createMember', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newMember),
-    });
+    try {
+      validationFunc();
+      if (validation === "failed")
+        return;
+      const response = await fetch('http://localhost:3000/createMember', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMember),
+      });
 
-    // Navigate back to members list after successful update
-    navigate('/members');
-
-
+      // Navigate back to members list after successful update
+      navigate('/members');
+    } catch (error) {
+      console.error('adding member failed:', error);
+    }
   }
+  //#endregion
 
-  const validateRequiredFields = () => {
-    const requiredFields = [
-      'First_name',
-      'Last_name',
-      'Id',
-      'Mobile_phon',
-      'Telephone',
-      'Address.city',
-      'Address.street',
-      'Address.number',
-    ];
+  //#region validation function
+  function validationFunc() {
+    //בדיקה שכל השדות מלאים
+    if (!newMember.First_name || !newMember.Last_name || !newMember.Id || !newMember.Mobile_phon || !newMember.Telephone || !newMember.Address.city || !newMember.Address.street || !newMember.Address.number) {
+      alert("Please fill in all required fields.");
+      setValidation("failed");
+      return;
+    }
 
-    // const missingFields = requiredFields.filter((field) => !newMember[field]);
+    //בדיקה ששדות מסוג מספר מכילות רק מספרים
+    if (
+      isNaN(newMember.Id) ||
+      isNaN(newMember.Mobile_phon) ||
+      isNaN(newMember.Telephone) ||
+      isNaN(newMember.Address.number)
+    ) {
+      alert("Id,Mobile Phone, Telephone, and Address Number should contain only numbers.");
+      setValidation("failed");
+      return;
+    }
 
-    // if (missingFields.length > 0) {
-    //   alert(`Please fill in the following required fields: ${missingFields.join(', ')}`);
-    //   return false;
-    // }
+    // בדיקה של פורמט התאריך 
+    const isValidPositiveDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(newMember.covid_info.covidPositiveDate);
+    const isValidRecoveryDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(newMember.covid_info.covidRecoveryDate);
+    // const isValidVaccinationDate = updatedMember.covid_info.vaccinations.every(vaccination => {
+    //     return vaccination.date === "" && /^(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(vaccination.date);
+    // });
 
-    return true; // All required fields filled
-  };
+    // בדיקה של תקינות התאריך - אם אחד מהם לא תקין, תוצג הודעת שגיאה והפונקציה תעצור כאן
+    if (!isValidPositiveDate || !isValidRecoveryDate) {
+      alert("Please enter valid dates in the format YYYY-MM-DD.");
+      setValidation("failed");
+      return;
+    }
+    // const updatedMemberWithVaccinations = {
+    //     ...updatedMember,
+    //     covid_info: {
+    //         ...updatedMember.covid_info,
+    //         vaccinations,
+    //     },
+    // };
+  }
+  //#endregion
 
+  //#region handleInputChange
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -74,7 +105,9 @@ function CreateMember() {
       setNewMember({ ...newMember, [name]: value });
     }
   };
+  //#endregion
 
+  //#region handleAddVaccination
   const handleAddVaccination = () => {
     if (newMember.covid_info.vaccinations.length >= 4) {
       alert('You can only add up to 4 vaccinations.');
@@ -96,8 +129,9 @@ function CreateMember() {
       },
     });
   };
+  //#endregion
 
-
+  //#region return Fields
   return (
     <div className="CreateMember">
       <h2>Create a New Member</h2>
@@ -163,6 +197,7 @@ function CreateMember() {
       <button onClick={onSubmitMemberClick}>Submit</button>
     </div>
   );
+  //#endregion
 }
 
 export default CreateMember;

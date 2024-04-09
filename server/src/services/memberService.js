@@ -58,7 +58,11 @@ const updateMember = async (req) => {
         $set: { ...rest },
         $merge: {
           Address,
-          covid_info,
+          covid_info: {
+            // Handle potential changes to vaccinations array:
+            $set: { ...covid_info.covidPositiveDate, ...covid_info.covidRecoveryDate },
+            $addToSet: { vaccinations: { $each: covid_info.vaccinations } }, // Add new vaccinations, preserving existing ones
+          },
         },
       },
       { new: true }

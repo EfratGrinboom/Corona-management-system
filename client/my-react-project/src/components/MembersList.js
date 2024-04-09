@@ -6,6 +6,7 @@ function MembersList() {
     const [allMembers, setAllMembers] = useState([]);
     const navigate = useNavigate();
 
+    //#region get all members
     useEffect(() => {
         async function fetchMembers() {
             try {
@@ -25,7 +26,9 @@ function MembersList() {
     const handleAddMember = () => {
         navigate('/createMember'); // Use navigate to redirect to CreateMember
     };
+    //#endregion
 
+    //#region print all members
     return (
         <div className='MembersList'>
             <ul>
@@ -38,6 +41,7 @@ function MembersList() {
             <button className='add-member-button' onClick={handleAddMember}>Add a new Member</button>
         </div>
     );
+    //#endregion
 }
 
 export default MembersList;

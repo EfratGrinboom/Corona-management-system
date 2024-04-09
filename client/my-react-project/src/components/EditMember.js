@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import '../style/EditMember.css';
-
 
 
 function EditMember() {
@@ -11,39 +10,57 @@ function EditMember() {
     const { member } = location.state;
     const [updatedMember, setUpdatedMember] = useState(member);
     const [vaccinations, setVaccinations] = useState(member.covid_info.vaccinations);
+    const [validation, setValidation] = "OK";
 
-
-    async function onSubmitMemberClick() {
+    //#region validation function
+    function validationFunc() {
+        //בדיקה שכל השדות מלאים
         if (!updatedMember.First_name || !updatedMember.Last_name || !updatedMember.Id || !updatedMember.Mobile_phon || !updatedMember.Telephone || !updatedMember.Address.city || !updatedMember.Address.street || !updatedMember.Address.number) {
             alert("Please fill in all required fields.");
+            setValidation("failed");
+            return;
+        }
+
+        //בדיקה ששדות מסוג מספר מכילות רק מספרים
+        if (
+            isNaN(updatedMember.Mobile_phon) ||
+            isNaN(updatedMember.Telephone) ||
+            isNaN(updatedMember.Address.number)
+        ) {
+            alert("Mobile Phone, Telephone, and Address Number should contain only numbers.");
+            setValidation("failed");
             return;
         }
 
         // בדיקה של פורמט התאריך 
         const isValidPositiveDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(updatedMember.covid_info.covidPositiveDate);
         const isValidRecoveryDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(updatedMember.covid_info.covidRecoveryDate);
-        const isValidVaccinationDate = updatedMember.covid_info.vaccinations.every(vaccination => {
-            return vaccination.date === "" && /^(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(vaccination.date);
-        });
-
-
-
+        // const isValidVaccinationDate = updatedMember.covid_info.vaccinations.every(vaccination => {
+        //     return vaccination.date === "" && /^(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(vaccination.date);
+        // });
 
         // בדיקה של תקינות התאריך - אם אחד מהם לא תקין, תוצג הודעת שגיאה והפונקציה תעצור כאן
         if (!isValidPositiveDate || !isValidRecoveryDate) {
             alert("Please enter valid dates in the format YYYY-MM-DD.");
+            setValidation("failed");
             return;
         }
+        // const updatedMemberWithVaccinations = {
+        //     ...updatedMember,
+        //     covid_info: {
+        //         ...updatedMember.covid_info,
+        //         vaccinations,
+        //     },
+        // };
+    }
+    //#endregion
 
-        const updatedMemberWithVaccinations = {
-            ...updatedMember,
-            covid_info: {
-                ...updatedMember.covid_info,
-                vaccinations,
-            },
-        };
-
+    //#region sending request
+    async function onSubmitMemberClick() {
         try {
+            validationFunc();
+            if (validation === "failed")
+                return;
             const response = await fetch(`http://localhost:3000/member/${updatedMember.Id}`, {
                 method: 'PUT',
                 headers: { 'Content-type': 'application/json' },
@@ -65,7 +82,9 @@ function EditMember() {
             console.error('Update error:', error);
         }
     }
+    //#endregion 
 
+    //#region handleInputChange function
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
@@ -95,7 +114,7 @@ function EditMember() {
         // טיפול בשדות Addres
         else if (name.includes("Address")) {
             // אם השדה הוא שדה בפרטי הכתובת
-            const [parentField, childField] = name.split(".");
+            const [parentField,childField] = name.split(".");
             setUpdatedMember(prevState => ({
                 ...prevState,
                 Address: {
@@ -112,9 +131,9 @@ function EditMember() {
         }));
 
     };
+    //#endregion 
 
-
-
+    //#region return member details
     return (
         <div className="EditMember">
             <h2 id="PersonalDetails">Personal details</h2>
@@ -187,6 +206,7 @@ function EditMember() {
             <button onClick={() => onSubmitMemberClick()}>Submit</button>
         </div>
     );
+    //#endregion
 }
 
 export default EditMember;

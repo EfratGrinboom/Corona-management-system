@@ -6,10 +6,10 @@ import '../style/MemberDetails.css';
 
 function MemberDetails() {
     const { id } = useParams();
+    const [member, setMember] = useState(null);
     const navigate = useNavigate();
 
-    const [member, setMember] = useState(null);
-
+    //#region fetchMember
     useEffect(() => {
         async function fetchMember() {
             try {
@@ -21,16 +21,18 @@ function MemberDetails() {
                 if (!response.ok) {
                     throw new Error(`Member not found: ${response.status}`);
                 }
-
                 const json = await response.json();
                 setMember(json);
+                console.log("member", member);
             } catch (error) {
                 console.error('Error fetching member:', error);
             }
         }
         fetchMember();
     }, [id]);
+    //#endregion
 
+    //#region delete member function
     function onDeleteMemberClick(id) {
         console.log('Deleting member with id:', id);
         async function deleteMember() {
@@ -41,16 +43,46 @@ function MemberDetails() {
             if (!response.ok) {
                 throw new Error(`Error deleting member: ${response.status}`);
             }
-            console.log('Deleting member with id', id, 'succed');
+            alert(`Member with id:${id} deleted successfully!`);
+
+            navigate('/members');// Navigate back to members list after successful deleting
         }
 
         deleteMember();
     }
+    //#endregion
 
+    //#region  format date function
+    function formatDate(dateString) {
+        console.log("dateString", dateString);
+        // Initialize a date object
+        const date = new Date(dateString);
+
+        // Split the date string on 'T' to separate date and time
+        const [datePart] = dateString.split('T');
+
+        // Create a new Date object from the date part
+        const dateWithoutTime = new Date(datePart);
+
+        // Get the day, month, and year
+        const day = dateWithoutTime.getDate();
+        const month = dateWithoutTime.getMonth() + 1; // Months are zero-based
+        const year = dateWithoutTime.getFullYear();
+
+        // Return the formatted date
+        return `${day}/${month}/${year}`;
+    }
+    //#endregion
+
+    //#region print member details
     if (!member) {
         return <div>Loading...</div>;
     }
-    const hasCovidInfo = member.covid_info && Object.keys(member.covid_info).length > 0;
+    const hasCovidInfo = member.covid_info && (
+        member.covid_info.covidPositiveDate ||
+        member.covid_info.covidRecoveryDate ||
+        (member.covid_info.vaccinations && member.covid_info.vaccinations.length > 0)
+    );
 
     return (
         <div className="MemberDetails">
@@ -71,14 +103,14 @@ function MemberDetails() {
             )}
 
             {hasCovidInfo && member.covid_info && member.covid_info.covidPositiveDate && (
-                <p>Positive Date: {new Date(member.covid_info.covidPositiveDate.$date).toLocaleString()}</p>
+                <p> Positive Date: {formatDate(member.covid_info.covidPositiveDate)}</p>
             )}
 
             {hasCovidInfo && member.covid_info && member.covid_info.covidRecoveryDate && (
-                <p>Recovery Date: {new Date(member.covid_info.covidRecoveryDate.$date).toLocaleString()}</p>
+                <p>Recovery Date: {formatDate(member.covid_info.covidRecoveryDate)}</p>
             )}
 
-            {hasCovidInfo && (
+            {hasCovidInfo && member.covid_info.vaccinations.length > 0 && (
                 <div>
                     <h3>Vaccinations</h3>
                     <ul>
@@ -94,7 +126,7 @@ function MemberDetails() {
 
                             return (
                                 <li key={index}>
-                                    {new Date(vaccination.date.$date).toLocaleDateString()} - {vaccination.manufacturer}
+                                    {formatDate(vaccination.date)} - {vaccination.manufacturer}
                                 </li>
                             );
                         })}
@@ -108,7 +140,6 @@ function MemberDetails() {
             </div>
         </div>
     );
-
+    //#endregion
 }
-
 export default MemberDetails;
