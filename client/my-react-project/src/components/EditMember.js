@@ -35,23 +35,24 @@ function EditMember() {
         // בדיקה של פורמט התאריך 
         const isValidPositiveDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(updatedMember.covid_info.covidPositiveDate);
         const isValidRecoveryDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(updatedMember.covid_info.covidRecoveryDate);
-        // const isValidVaccinationDate = updatedMember.covid_info.vaccinations.every(vaccination => {
-        //     return vaccination.date === "" && /^(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(vaccination.date);
-        // });
 
         // בדיקה של תקינות התאריך - אם אחד מהם לא תקין, תוצג הודעת שגיאה והפונקציה תעצור כאן
+        if (!updatedMember.covid_info.covidPositiveDate) {
+            if (!updatedMember.covid_info.covidRecoveryDate) {
+                return;
+            }
+            alert("It is not possible to enter a date of recovery without a date of illness");
+            setValidation("failed");
+            return;
+        }
+        if (!updatedMember.covid_info.covidRecoveryDate) {
+            return;
+        }
         if (!isValidPositiveDate || !isValidRecoveryDate) {
             alert("Please enter valid dates in the format YYYY-MM-DD.");
             setValidation("failed");
             return;
         }
-        // const updatedMemberWithVaccinations = {
-        //     ...updatedMember,
-        //     covid_info: {
-        //         ...updatedMember.covid_info,
-        //         vaccinations,
-        //     },
-        // };
     }
     //#endregion
 
@@ -114,7 +115,7 @@ function EditMember() {
         // טיפול בשדות Addres
         else if (name.includes("Address")) {
             // אם השדה הוא שדה בפרטי הכתובת
-            const [parentField,childField] = name.split(".");
+            const [parentField, childField] = name.split(".");
             setUpdatedMember(prevState => ({
                 ...prevState,
                 Address: {
@@ -132,6 +133,21 @@ function EditMember() {
 
     };
     //#endregion 
+
+    //#region formatDate function
+    function formatDate(dateString) {
+        // Initialize a date object
+        const date = new Date(dateString);
+
+        // Get the year, month, and day
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // מוסיפה 1 כי חודשים ממוספרים מ-0 עד 11.
+        const day = ("0" + date.getDate()).slice(-2); // Pad with leading zero if necessary
+
+        // Return the formatted date
+        return `${year}-${month}-${day}`;
+    }
+    //#endregion
 
     //#region return member details
     return (
@@ -172,11 +188,11 @@ function EditMember() {
 
             <h2>COVID Information:</h2>
             <label htmlFor="positiveDate">Positive Date:</label>
-            <input type="text" id="positiveDate" name="covid_info.covidPositiveDate" value={updatedMember.covid_info.covidPositiveDate} onChange={handleInputChange} />
+            <input type="text" id="positiveDate" name="covid_info.covidPositiveDate" value={updatedMember.covid_info.covidPositiveDate === null ? "" : formatDate(updatedMember.covid_info.covidPositiveDate)} onChange={handleInputChange} />
             <br />
 
             <label htmlFor="recoveryDate">Recovery Date:</label>
-            <input type="text" id="recoveryDate" name="covid_info.covidRecoveryDate" value={updatedMember.covid_info.covidRecoveryDate} onChange={handleInputChange} />
+            <input type="text" id="recoveryDate" name="covid_info.covidRecoveryDate" value={updatedMember.covid_info.covidPositiveDate === null ? "" : formatDate(updatedMember.covid_info.covidRecoveryDate)} onChange={handleInputChange} />
             <br />
 
             <h3>Vaccinations:</h3>

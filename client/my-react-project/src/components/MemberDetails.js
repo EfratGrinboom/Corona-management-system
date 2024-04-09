@@ -17,7 +17,7 @@ function MemberDetails() {
                     method: 'GET',
                     headers: { 'Content-type': 'application/json' }
                 });
-                console.error('response:', response); // לצורך בדיקת תגובת השרת
+                console.error('response:', response); // בשביל בדיקת תגובת השרת
                 if (!response.ok) {
                     throw new Error(`Member not found: ${response.status}`);
                 }
@@ -34,7 +34,6 @@ function MemberDetails() {
 
     //#region delete member function
     function onDeleteMemberClick(id) {
-        console.log('Deleting member with id:', id);
         async function deleteMember() {
             const response = await fetch(`http://localhost:3000/member/${id}`, {
                 method: 'DELETE',
@@ -54,7 +53,6 @@ function MemberDetails() {
 
     //#region  format date function
     function formatDate(dateString) {
-        console.log("dateString", dateString);
         // Initialize a date object
         const date = new Date(dateString);
 

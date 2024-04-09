@@ -68,10 +68,18 @@ function CreateMember() {
     // בדיקה של פורמט התאריך 
     const isValidPositiveDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(newMember.covid_info.covidPositiveDate);
     const isValidRecoveryDate = /^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(newMember.covid_info.covidRecoveryDate);
-    // const isValidVaccinationDate = updatedMember.covid_info.vaccinations.every(vaccination => {
-    //     return vaccination.date === "" && /^(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?)?$/.test(vaccination.date);
-    // });
-
+    // בדיקה של תקינות התאריך - אם אחד מהם לא תקין, תוצג הודעת שגיאה והפונקציה תעצור כאן
+    if (!newMember.covid_info.covidPositiveDate) {
+      if (!newMember.covid_info.covidRecoveryDate) {
+        return;
+      }
+      alert("It is not possible to enter a date of recovery without a date of illness");
+      setValidation("failed");
+      return;
+    }
+    if (!newMember.covid_info.covidRecoveryDate) {
+      return;
+    }
     // בדיקה של תקינות התאריך - אם אחד מהם לא תקין, תוצג הודעת שגיאה והפונקציה תעצור כאן
     if (!isValidPositiveDate || !isValidRecoveryDate) {
       alert("Please enter valid dates in the format YYYY-MM-DD.");
